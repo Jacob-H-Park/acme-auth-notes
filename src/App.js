@@ -1,48 +1,51 @@
-import React from 'react';
-import axios from 'axios';
-import { connect } from 'react-redux';
-import { attemptLogin, logout } from './store';
-import { Route, Switch, Redirect } from 'react-router-dom';
-import Home from './Home';
-import Notes from './Notes';
-import SignIn from './SignIn';
+import React from "react";
+import axios from "axios";
+import { connect } from "react-redux";
+import { attemptLogin, logout, fetchNotes } from "./store";
+import { Route, Switch, Redirect } from "react-router-dom";
+import Home from "./Home";
+import Notes from "./Notes";
+import SignIn from "./SignIn";
+import CreateNewNote from "./CreateNewNote";
 
-
-class App extends React.Component{
-  componentDidMount(){
+class App extends React.Component {
+  componentDidMount() {
     this.props.attemptLogin();
+    this.props.fetchNotes();
   }
-  render(){
+  render() {
     const { auth } = this.props;
-    console.log(auth);
 
-    if(!auth.id){
+    if (!auth.id) {
       return (
         <Switch>
-          <Route path='/signin' component={ SignIn } />
-          <Route path='/' component={ SignIn }/>
+          <Route path="/signin" component={SignIn} />
+          <Route path="/" component={SignIn} />
         </Switch>
       );
-    }
-    else {
+    } else {
       return (
         <Switch>
-          <Route path='/home' component={ Home } />
-          <Route path='/notes' component={ Notes } />
-          <Redirect to='/home' />
+          <Route path="/home" component={Home} />
+          <Route exact path="/create" component={CreateNewNote} />
+          <Route path="/notes" component={Notes} />
+          <Redirect to="/home" />
         </Switch>
       );
     }
   }
 }
 
-const mapState = state => state;
-const mapDispatch = (dispatch)=> {
+const mapState = (state) => state;
+const mapDispatch = (dispatch) => {
   return {
-    attemptLogin: ()=> {
+    attemptLogin: () => {
       return dispatch(attemptLogin());
-    }
-  }
-}
+    },
+    fetchNotes: () => {
+      return dispatch(fetchNotes());
+    },
+  };
+};
 
 export default connect(mapState, mapDispatch)(App);
